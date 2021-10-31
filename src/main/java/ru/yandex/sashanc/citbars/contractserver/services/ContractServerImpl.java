@@ -6,6 +6,7 @@ import ru.yandex.sashanc.citbars.contractserver.repository.dao.ContractDaoImpl;
 import ru.yandex.sashanc.citbars.contractserver.repository.dao.IContractDao;
 import ru.yandex.sashanc.citbars.contractserver.model.dto.ContractDto;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +17,13 @@ public class ContractServerImpl implements IContractServer {
         IContractDao contractDao = new ContractDaoImpl();
         ContractDto contractDto;
         List<ContractDto> contractDtoList = new ArrayList<>();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         for (Contract contract : contractDao.getContractList()) {
             contractDto = new ContractDto();
             contractDto.setId(contract.getId());
             contractDto.setName(contract.getName());
-            contractDto.setContractDate(contract.getContractDate());
-            contractDto.setContractUsingDate(contract.getContractUsingDate());
+            contractDto.setContractDate(contract.getContractDate().format(dateTimeFormatter));
+            contractDto.setContractUsingDate(contract.getContractUsingDate().format(dateTimeFormatter));
             int difDays = contract.getContractUsingDate().compareTo(contract.getContractDate());
             if (difDays > 30) {
                 contractDto.setStatus("NotActive");
