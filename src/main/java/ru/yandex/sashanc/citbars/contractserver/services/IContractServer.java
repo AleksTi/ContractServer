@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface IContractServer {
     List<ContractDto> getContractDtoList();
+    String getJsonStringContractDtoList();
 }

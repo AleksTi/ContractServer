@@ -7,7 +7,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionManagerPostgresImpl implements IConnectionManager {
-    private static Logger logger = Logger.getLogger(ConnectionManagerPostgresImpl.class);
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/contracts";
+    private static final String DB_NAME = "postgres";
+    private static final String DB_PASSWORD = "sd456jk+L";
+    private static final Logger logger = Logger.getLogger(ConnectionManagerPostgresImpl.class);
     private static IConnectionManager connectionManager;
 
     private ConnectionManagerPostgresImpl(){
@@ -22,13 +25,10 @@ public class ConnectionManagerPostgresImpl implements IConnectionManager {
 
     @Override
     public Connection getConnection() {
-        String url = "jdbc:postgresql://localhost:5432/contracts";
-        String name = "postgres";
-        String password = "sd456jk+L";
         Connection connection = null;
         try {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(url, name, password);
+            connection = DriverManager.getConnection(DB_URL, DB_NAME, DB_PASSWORD);
         } catch (SQLException e) {
             logger.warn("Ошибка при подключении к БД", e);
         } catch (ClassNotFoundException e) {

@@ -16,30 +16,31 @@ import java.util.List;
 
 @Repository
 public class ContractDaoImpl implements IContractDao {
-    private final static Logger logger = Logger.getLogger(ContractDaoImpl.class);
-    private IConnectionManager connectionManager = ConnectionManagerPostgresImpl.getInstance();
+    private static final Logger logger = Logger.getLogger(ContractDaoImpl.class);
+    private final IConnectionManager connectionManager = ConnectionManagerPostgresImpl.getInstance();
 
     @Override
     public List<Contract> getContractList() {
         Connection connection = connectionManager.getConnection();
         List<Contract> contractList = Collections.emptyList();
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM contracts");
-            ResultSet resultSet = statement.executeQuery();
-            Contract contract = null;
-            contractList = new ArrayList<>();
-            while(resultSet.next()){
-                contract = new Contract(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getDate("date").toLocalDate(),
-                        resultSet.getDate("editing_date").toLocalDate()
-                );
-                contractList.add(contract);
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM contracts")) {
+                Contract contract;
+                contractList = new ArrayList<>();
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    contract = new Contract(
+                            resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getDate("date").toLocalDate(),
+                            resultSet.getDate("editing_date").toLocalDate()
+                    );
+                    contractList.add(contract);
+                }
             }
             connection.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.info("Error getting data from the database",e);
         }
         return contractList;
     }
